@@ -49,7 +49,6 @@ def getUniquePrice(instrumentRow):
 	return float(uniquePrice)
 
 def getCurrency2(instrumentRow):
-	print(instrumentRow[10])
 	return instrumentRow[10]
 
 # Functions for creating instruments
@@ -267,7 +266,7 @@ def getInstrumentPenalties(filePath):
 
 	penalties = []
 	for i in csvInstrumentPenalties:
-		if(getInstrumentType(i)=="ccs"):
+		if (getInstrumentType(i)=="ccs") | (getInstrumentType(i)=="ts"):
 			penalty = 100 # borde vara 100ggr större men ty lägre likviditet så tillåter vi lite mer avvikelser
 		else:
 			penalty = 10
