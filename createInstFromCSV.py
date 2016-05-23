@@ -240,11 +240,17 @@ def getInstrumentTenors(filePath):
 				tenor = "3M"
 			elif(getPeriod1(i) == 6):
 				tenor = "6M"
+			elif(getPeriod1(i) == 1):
+				tenor = "1M"
 		elif(getInstrumentType(i) =="fra"):
-			if(getPeriod2(i)-getPeriod1(i) == 3):
-				tenor = "3M"
-			elif(getPeriod2(i)-getPeriod1(i) == 6):
-				tenor = "6M"
+			print(str(getPeriod1(i)) + " - " + str(getPeriod2(i)))
+
+			#if(getPeriod2(i)-getPeriod1(i) == 3):
+			#	tenor = "3M"
+			#elif(getPeriod2(i)-getPeriod1(i) == 6):
+			#	tenor = "6M"
+			#elif(getPeriod2(i)-getPeriod1(i) == 1):
+			#	tenor = "1M"
 		tenors.append(tenor)
 		
 	a = list(set(tenors))
@@ -388,7 +394,18 @@ def getTenorSet(filePath):
 				tenor = "6M"
 			elif(getPeriod2(i) == 3):
 				tenor = "3M"
-		tenors.append(tenor)
+			elif(getPeriod2(i) == 1):
+				tenor = "1M"
+			tenors.append(tenor)
+
+			if(getPeriod1(i) == 6):
+				tenor = "6M"
+			elif(getPeriod1(i) == 3):
+				tenor = "3M"
+			elif(getPeriod1(i) == 1):
+				tenor = "1M"
+			tenors.append(tenor)
+		
 	a = list(set(tenors))
 	#print(a)
 
