@@ -9,8 +9,9 @@ class myCCS:
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
         
         schedule = []
+
         for i in range(0,2):
-            settle_date = calendar[i].advance(clcDate, 2, ql.Days)
+            settle_date = calendar[i].advance(clcDate, 0, ql.Days)
             maturity_date = calendar[i].advance(settle_date, maturity, ql.Months)
             tenorPeriod = ql.Period(tenor[i], ql.Months)
             schedule.append(ql.Schedule (settle_date, maturity_date, 
@@ -86,8 +87,9 @@ class myTS:
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
 
         schedule = []
+
         for i in range(0,2):
-            settle_date = calendar.advance(clcDate, 2, ql.Days)
+            settle_date = calendar.advance(clcDate, 0, ql.Days)
             maturity_date = calendar.advance(settle_date, maturity, ql.Months)
             tenorPeriod = ql.Period(tenor[i], ql.Months)
             schedule.append(ql.Schedule (settle_date, maturity_date, 
@@ -146,8 +148,9 @@ class myIRS:
     # The class "constructor" - It's actually an initializer 
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
         schedule = []
+
         for i in range(0,2):
-            settle_date = calendar.advance(clcDate, 2, ql.Days)
+            settle_date = calendar.advance(clcDate, 0, ql.Days)
             maturity_date = calendar.advance(settle_date, maturity, ql.Months)
             
             tenorPeriod = ql.Period(tenor[i], ql.Months)
@@ -214,19 +217,11 @@ class myOIS:
     # The class "constructor" - It's actually an initializer 
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
 
-        #settle_date = calendar.advance(clcDate, 0, ql.Days)
-        #maturity_date = calendar.advance(settle_date, maturity, ql.Months)
-        #tenorPeriod = ql.Period(0, ql.Months)
-        #print("----intr----")
-        #print("datum: " + str(clcDate))
 
-        #print("length: " + str(tenorPeriod.length()))
-        #print("units: " + str(tenorPeriod.units()))
-        #print("frequency: " + str(tenorPeriod.frequency()))
 
         schedule = []
         for i in range(0,2):
-            settle_date = calendar.advance(clcDate, 2, ql.Days)
+            settle_date = calendar.advance(clcDate, 0, ql.Days)
             maturity_date = calendar.advance(settle_date, maturity, ql.Months)
             tenorPeriod = ql.Period(tenor[i], ql.Months)
             schedule.append(ql.Schedule (settle_date, maturity_date, 
@@ -286,12 +281,14 @@ class myFRA:
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
         #print(tenor)
         maturity = tenor
+        #print(tenor[0], " to ", tenor[1])
 
         schedule = []
         for i in range(0,2):
-            settle_date = calendar.advance(clcDate, 2, ql.Days)
-
+            settle_date = calendar.advance(clcDate, 0, ql.Days)
             maturity_date = calendar.advance(settle_date, maturity[i], ql.Months)
+            #print(settle_date, " to ", maturity_date, " tenor: ", tenor[i])
+            #print(maturity_date-settle_date)
             #print("mat date: " + str(maturity_date))
             tenorPeriod = ql.Period(tenor[i], ql.Months)
             schedule.append(ql.Schedule (settle_date, maturity_date, 
@@ -301,6 +298,7 @@ class myFRA:
 
         self.fix = schedule[0]
         self.flt = schedule[1]
+        
 
         self.fixDateConvention = dateConvention
         self.fltDateConvention = dateConvention

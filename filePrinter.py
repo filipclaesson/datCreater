@@ -77,13 +77,11 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
     iName = iList[0].getInstrumentType()
     print(str(len(iList)) + " " + iList[0].getInstrumentType())
 
-
     # setup iSet
     iSet = [] 
     for i in range(startIndex,len(iList) + startIndex):
         iSet.append(i)
     
-
     # setup maxiN
     iNfix = []
     for i in iList:
@@ -91,7 +89,6 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
 
     #print(iNfix)
     maxiN = max(iNfix)
-
 
     # create matricesInfo for each type of instrument
     matricesInfo = []
@@ -103,7 +100,6 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
         matricesInfo = [ ["t", "Flt1"], ["dt", "Flt1"], ["t", "Flt2"], ["dt" ,"Flt2"] ]
     elif iList[0].getInstrumentType() == "ccs":
         matricesInfo = [ ["t", "Fix"], ["dt", "Fix"], ["t", "Flt1"], ["dt" ,"Flt1"], ["t", "Flt2"], ["dt" ,"Flt2"] ]
-
 
     #create matrices depending on the instrument type (check in matricesInfo)
     matrices = []
@@ -178,9 +174,6 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
             cnt = cnt+1
         f.write(";\n")
 
-
-
-
     # print it0
     f.write("param "+ iName + "t0 := ")
     start = startIndex
@@ -228,13 +221,9 @@ def createT(instrumentList, date):
 
     return Tnew
 
-
 def createUniquePrices(instrumentList):
     uniquePrices = []
     for typeList in instrumentList:
         for instr in typeList:
             uniquePrices.append(instr.getUniquePrice())
     return uniquePrices
-
-
-

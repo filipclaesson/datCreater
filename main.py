@@ -6,7 +6,7 @@ from instruments import *
 from createInstFromCSV import *
 
 
-csvFilePath = 'csvFiler/datain20160512_usd_sek_swedbank.csv'
+csvFilePath = 'csvFiler/set1-20160512-minimal.csv'
 today = Date(12, May, 2016)
 
 

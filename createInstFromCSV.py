@@ -6,8 +6,6 @@ from instruments import *
 #myOIS(clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration)
 
 # Functions for getting raw instrument information from instrumentRow in csv
-smallPenalty = 0
-bigPenalty = 0
 
 def getInstrumentType(instrumentRow):
 	return instrumentRow[0]
@@ -131,10 +129,6 @@ def getQLDayConvention(convention):
 	elif convention == "Nearest":
 		return ql.Nearest
 
-
-
-
-
 def createInstrumentsFromCSV(filePath):
 
 	csvInstrumentInfo = []
@@ -145,7 +139,6 @@ def createInstrumentsFromCSV(filePath):
 		for row in reader:
 			csvInstrumentInfo.append(row)
 
-	
 	#create the instruments from the instrumentInfo, 
 	iterator = iter(csvInstrumentInfo)
 	newInstrumentFlag = False
@@ -165,7 +158,6 @@ def createInstrumentsFromCSV(filePath):
 				newInstrumentFlag = False
 
 		#create the intrument
-
 		tempInstrumentFunction = getInstrumentTypeFunction(getInstrumentType(csvInstrumentInfo[i]))
 		tempList.append(tempInstrumentFunction(getDate(csvInstrumentInfo[i]), getTenors(csvInstrumentInfo[i]),getMaturity(csvInstrumentInfo[i]), getQLCalendar(csvInstrumentInfo[i]), getQLDayConvention(getBusinessDayConvention(csvInstrumentInfo[i])), getQLDayConvention(getTerminationConvention(csvInstrumentInfo[i])), getQLDateGeneration(csvInstrumentInfo[i]), ql.Actual360(), getUniquePrice(csvInstrumentInfo[i])))
 		#if it is the last instrument the list is saved
@@ -221,11 +213,11 @@ def getInstrumentTenors(filePath):
 	tenors = []
 
 	for i in csvInstrumentTenors:
+		tenor="-99"
 		
 		if(getInstrumentType(i)=="ois"):
 			tenor = "ON"
 		elif(getInstrumentType(i) =="irs"):
-
 			if(getPeriod2(i) == 3):
 				tenor = "3M"
 			elif(getPeriod2(i) == 6):
@@ -243,23 +235,19 @@ def getInstrumentTenors(filePath):
 			elif(getPeriod1(i) == 1):
 				tenor = "1M"
 		elif(getInstrumentType(i) =="fra"):
-			print(str(getPeriod1(i)) + " - " + str(getPeriod2(i)))
-
-			#if(getPeriod2(i)-getPeriod1(i) == 3):
-			#	tenor = "3M"
-			#elif(getPeriod2(i)-getPeriod1(i) == 6):
-			#	tenor = "6M"
-			#elif(getPeriod2(i)-getPeriod1(i) == 1):
-			#	tenor = "1M"
+			#print(str(getPeriod1(i)) + " - " + str(getPeriod2(i)))
+			
+			if(getMaturity(i) == 3):
+				tenor = "3M"
+			elif(getMaturity(i) == 6):
+				tenor = "6M"
+			elif(getMaturity(i) == 1):
+				tenor = "1M"
 		tenors.append(tenor)
 		
 	a = list(set(tenors))
-	#print(a)
-
-	#print(tenors)
 
 	return tenors
-
 
 def getInstrumentPenalties(filePath):
 	csvInstrumentPenalties = []
@@ -346,7 +334,7 @@ def getInstrumentTenor2(filePath):
 		if(getInstrumentType(i) != "ts"):
 			tenor = 0
 		else:
-			tenor = str(getPeriod2(i))+"M"
+			tenor = str(int(getPeriod2(i)))+"M"
 
 		tenors.append(tenor)
 	return tenors
