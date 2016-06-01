@@ -343,3 +343,71 @@ class myFRA:
 
     def getClcDate(self):
         return self.clcDate
+
+class myFXF:
+    instrumentType = "fxf"
+
+    # The class "constructor" - It's actually an initializer 
+    def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
+        #print(tenor)
+        maturity = tenor
+        #print(tenor[0], " to ", tenor[1])
+
+        schedule = []
+        for i in range(0,1):
+            settle_date = calendar.advance(clcDate, 0, ql.Days)
+            maturity_date = calendar.advance(settle_date, maturity[i], ql.Months)
+            tenorPeriod = ql.Period(tenor[i], ql.Months)
+            schedule.append(ql.Schedule (settle_date, maturity_date, 
+                                  tenorPeriod, calendar, 
+                                  businessDayConvention, terminationDateBusinessDayConvention, 
+                                  dateGeneration, False))
+
+        self.fix = schedule[0]
+        self.flt = schedule[0]
+        
+
+        self.fixDateConvention = dateConvention
+        self.fltDateConvention = dateConvention
+        self.uniquePrice = uniquePrice
+        self.clcDate = clcDate
+
+
+    def getFix(self):
+        cfList = []
+        for i in range(1,len(self.fix)):
+            cfList.append(self.fix[i])
+        return cfList
+        
+    def getFlt(self):
+        cfList = []
+        for i in range(1,len(self.flt)):
+            cfList.append(self.flt[i])
+        return cfList
+
+    def getInstrumentType(self):
+        return self.instrumentType
+    def getMaxCfs(self):
+        #print(str(len(self.fix)) + " " + str(len(self.flt)))
+        return (max(len(self.fix),len(self.flt)))
+
+    def getFixDateConvention(self):
+        return self.fixDateConvention
+
+    def getFltDateConvention(self):
+        return self.fltDateConvention
+
+    def getAllCashFlows(self):
+        cf = []
+        for i in self.getFix():
+            cf.append(i)
+        for i in self.getFlt():
+            cf.append(i)
+        return cf
+    
+    def getUniquePrice(self):
+        return self.uniquePrice
+
+    def getClcDate(self):
+        return self.clcDate
+

@@ -62,6 +62,8 @@ def getInstrumentTypeFunction(instrumentType):
 		return myCCS
 	elif instrumentType == "fra":
 		return myFRA
+	elif instrumentType == "fxf":
+		return myFXF
 
 def getQLCalendar(instrumentRow):
 	countryCode = getCountryCode(instrumentRow)
@@ -235,8 +237,13 @@ def getInstrumentTenors(filePath):
 			elif(getPeriod1(i) == 1):
 				tenor = "1M"
 		elif(getInstrumentType(i) =="fra"):
-			#print(str(getPeriod1(i)) + " - " + str(getPeriod2(i)))
-			
+			if(getMaturity(i) == 3):
+				tenor = "3M"
+			elif(getMaturity(i) == 6):
+				tenor = "6M"
+			elif(getMaturity(i) == 1):
+				tenor = "1M"
+		elif(getInstrumentType(i) =="fxf"):
 			if(getMaturity(i) == 3):
 				tenor = "3M"
 			elif(getMaturity(i) == 6):

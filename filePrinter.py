@@ -90,7 +90,7 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
     #print(iNfix)
     maxiN = max(iNfix)
 
-    # create matricesInfo for each type of instrument
+    # create matricesInfo for each type of instrument (not FRA and FXF)
     matricesInfo = []
     if iList[0].getInstrumentType() == "irs":
         matricesInfo = [ ["t", "Fix"], ["dt", "Fix"], ["t", "Flt"], ["dt" ,"Flt"] ]
@@ -145,34 +145,61 @@ def printInstrumnetfile(iList, startIndex, f, T, startDate):
 
     #special case for fra
     if len(matricesInfo) == 0:
-        f.write("param frat1 := ")
-        cnt=0
-        for inst in iList:
-            dc = inst.getFixDateConvention()
-            t = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])
-            f.write(str(cnt+startIndex) + " " + str(findIndexInT(T,t)) + " ")
-            #f.write(str(cnt+startIndex) + " " + str(inst.getFix()[0]) + " ")
-            cnt = cnt+1
-        f.write(";\n")
-        f.write("param frat2 := ")
-        cnt=0
-        for inst in iList:
-            dc = inst.getFixDateConvention()
-            t = dc.yearFraction(inst.getClcDate(), inst.getFlt()[0])            
-            f.write(str(cnt+startIndex) + " " + str(findIndexInT(T,t)) + " ")
-            #f.write(str(cnt+startIndex) + " " + str(inst.getFlt()[0]) + " ")
-            cnt = cnt+1
-        f.write(";\n")
-        cnt=0
-        f.write("param fradt := ")
-        for inst in iList:
-            dc = inst.getFixDateConvention()
-            t1 = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])
-            t2 = dc.yearFraction(inst.getClcDate(), inst.getFlt()[0])           
-            f.write(str(cnt+startIndex) + " " + str(t2-t1) + " ")
-            #f.write(str(cnt+startIndex) + " " + str(inst.getFlt()[0]) + " ")
-            cnt = cnt+1
-        f.write(";\n")
+        if(iList[0].getInstrumentType() == "fra"):
+            f.write("param frat1 := ")
+            cnt=0
+            for inst in iList:
+                dc = inst.getFixDateConvention()
+                t = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])
+                f.write(str(cnt+startIndex) + " " + str(findIndexInT(T,t)) + " ")
+                #f.write(str(cnt+startIndex) + " " + str(inst.getFix()[0]) + " ")
+                cnt = cnt+1
+            f.write(";\n")
+            f.write("param frat2 := ")
+            cnt=0
+            for inst in iList:
+                dc = inst.getFixDateConvention()
+                t = dc.yearFraction(inst.getClcDate(), inst.getFlt()[0])            
+                f.write(str(cnt+startIndex) + " " + str(findIndexInT(T,t)) + " ")
+                #f.write(str(cnt+startIndex) + " " + str(inst.getFlt()[0]) + " ")
+                cnt = cnt+1
+            f.write(";\n")
+            cnt=0
+            f.write("param fradt := ")
+            for inst in iList:
+                dc = inst.getFixDateConvention()
+                t1 = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])
+                t2 = dc.yearFraction(inst.getClcDate(), inst.getFlt()[0])           
+                f.write(str(cnt+startIndex) + " " + str(t2-t1) + " ")
+                #f.write(str(cnt+startIndex) + " " + str(inst.getFlt()[0]) + " ")
+                cnt = cnt+1
+            f.write(";\n")
+        # special case for fxf
+        if(iList[0].getInstrumentType() == "fxf"):
+            f.write("param fxft := ")
+            cnt=0
+            for inst in iList:
+                dc = inst.getFixDateConvention()
+                t = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])
+                f.write(str(cnt+startIndex) + " " + str(findIndexInT(T,t)) + " ")
+                #f.write(str(cnt+startIndex) + " " + str(inst.getFix()[0]) + " ")
+                cnt = cnt+1
+            f.write(";\n")
+            
+            cnt=0
+            f.write("param fxfdt := ")
+            for inst in iList:
+                dc = inst.getFixDateConvention()
+                t1 = dc.yearFraction(inst.getClcDate(), inst.getFix()[0])        
+                f.write(str(cnt+startIndex) + " " + str(t1) + " ")
+                #f.write(str(cnt+startIndex) + " " + str(inst.getFlt()[0]) + " ")
+                cnt = cnt+1
+            f.write(";\n")
+
+            
+
+
+
 
     # print it0
     f.write("param "+ iName + "t0 := ")
