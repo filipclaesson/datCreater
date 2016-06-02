@@ -4,12 +4,10 @@ from filePrinter import *
 class myCCS:
     instrumentType = "ccs"
 
-
     # The class "constructor" - It's actually an initializer 
     def __init__(self, clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration, dateConvention, uniquePrice):
         
         schedule = []
-
         for i in range(0,2):
             settle_date = calendar[i].advance(clcDate, 0, ql.Days)
             maturity_date = calendar[i].advance(settle_date, maturity, ql.Months)
@@ -77,8 +75,6 @@ class myCCS:
 
     def getClcDate(self):
         return self.clcDate
-
-
 
 class myTS:
     instrumentType = "ts"

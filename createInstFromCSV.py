@@ -2,11 +2,45 @@ import csv
 import QuantLib as ql
 from instruments import *
 
-#f = open('datain.csv', 'rb')
-#myOIS(clcDate, tenor, maturity, calendar, businessDayConvention, terminationDateBusinessDayConvention, dateGeneration)
+csvInstruments = []
+def readCsv(filePath):
+	#create a list of instrumentInfos - list item is a list of attributes of one instrument
+	with open(filePath, 'rt') as f:
+		reader = csv.reader(f, delimiter=';')
+		next(reader) # to skip the top row
+		for row in reader:
+			csvInstruments.append(row)
+
+def createInstrumentsFromCSV():
+	iterator = iter(csvInstruments)
+	newInstrumentFlag = False
+	instrumentSetsList = []
+	tempList = []
+	for i in range(0, len(csvInstruments)):
+		# if the flag is raised the instrument is of a new type and the list is saved and a new one is created
+		if (newInstrumentFlag):
+			instrumentSetsList.append(tempList)
+			tempList = []
+		
+		#raise flag if next instrument is of new type
+		if i < (len(csvInstruments)-1):
+			if getInstrumentType(csvInstruments[i+1]) != getInstrumentType(csvInstruments[i]):
+				newInstrumentFlag = True
+			else:
+				newInstrumentFlag = False
+
+		#create the intrument
+		tempInstrumentFunction = getInstrumentTypeFunction(getInstrumentType(csvInstruments[i]))
+		tempList.append(tempInstrumentFunction(getDate(csvInstruments[i]), getTenors(csvInstruments[i]),getMaturity(csvInstruments[i]), getQLCalendar(csvInstruments[i]), getQLDayConvention(getBusinessDayConvention(csvInstruments[i])), getQLDayConvention(getTerminationConvention(csvInstruments[i])), getQLDateGeneration(csvInstruments[i]), ql.Actual360(), getUniquePrice(csvInstruments[i])))
+		#if it is the last instrument the list is saved
+		if i == len(csvInstruments)-1:
+			instrumentSetsList.append(tempList)
+
+	return instrumentSetsList
+
+
 
 # Functions for getting raw instrument information from instrumentRow in csv
-
 def getInstrumentType(instrumentRow):
 	return instrumentRow[0]
 
@@ -50,7 +84,6 @@ def getCurrency2(instrumentRow):
 	return instrumentRow[10]
 
 # Functions for creating instruments
-
 def getInstrumentTypeFunction(instrumentType):
 	if instrumentType == "irs":
 		return myIRS
@@ -131,90 +164,27 @@ def getQLDayConvention(convention):
 	elif convention == "Nearest":
 		return ql.Nearest
 
-def createInstrumentsFromCSV(filePath):
 
-	csvInstrumentInfo = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentInfo.append(row)
 
-	#create the instruments from the instrumentInfo, 
-	iterator = iter(csvInstrumentInfo)
-	newInstrumentFlag = False
-	instrumentSetsList = []
-	tempList = []
-	for i in range(0, len(csvInstrumentInfo)):
-		# if the flag is raised the instrument is of a new type and the list is saved and a new one is created
-		if (newInstrumentFlag):
-			instrumentSetsList.append(tempList)
-			tempList = []
-		
-		#raise flag if next instrument is of new type
-		if i < (len(csvInstrumentInfo)-1):
-			if getInstrumentType(csvInstrumentInfo[i+1]) != getInstrumentType(csvInstrumentInfo[i]):
-				newInstrumentFlag = True
-			else:
-				newInstrumentFlag = False
-
-		#create the intrument
-		tempInstrumentFunction = getInstrumentTypeFunction(getInstrumentType(csvInstrumentInfo[i]))
-		tempList.append(tempInstrumentFunction(getDate(csvInstrumentInfo[i]), getTenors(csvInstrumentInfo[i]),getMaturity(csvInstrumentInfo[i]), getQLCalendar(csvInstrumentInfo[i]), getQLDayConvention(getBusinessDayConvention(csvInstrumentInfo[i])), getQLDayConvention(getTerminationConvention(csvInstrumentInfo[i])), getQLDateGeneration(csvInstrumentInfo[i]), ql.Actual360(), getUniquePrice(csvInstrumentInfo[i])))
-		#if it is the last instrument the list is saved
-		if i == len(csvInstrumentInfo)-1:
-			instrumentSetsList.append(tempList)
-
-	return instrumentSetsList
-
-def getInstrumentIndexes(filePath):
-	csvInstrumentInfo = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentInfo.append(row)
-
+def getInstrumentIndexes():
 	indexes = [1]
-
-	for i in range(0, len(csvInstrumentInfo)):
-		#print(csvInstrumentInfo[i])
-		if i < (len(csvInstrumentInfo)-1):
-			if getInstrumentType(csvInstrumentInfo[i+1]) != getInstrumentType(csvInstrumentInfo[i]):
+	for i in range(0, len(csvInstruments)):
+		if i < (len(csvInstruments)-1):
+			if getInstrumentType(csvInstruments[i+1]) != getInstrumentType(csvInstruments[i]):
 				indexes.append(i+2)
-
 	return indexes
 
 
-def getInstrumentCurrencies(filePath):
-	csvInstrumentInfo = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentInfo.append(row)
-
+def getInstrumentCurrencies():
 	currencies = []
-	for i in csvInstrumentInfo:
+	for i in csvInstruments:
 		currencies.append(getCountryCode(i))
-
 	return currencies
 
-def getInstrumentTenors(filePath):
-	csvInstrumentTenors = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentTenors.append(row)
-
+def getInstrumentTenors():
 	tenors = []
 
-	for i in csvInstrumentTenors:
+	for i in csvInstruments:
 		tenor="-99"
 		
 		if(getInstrumentType(i)=="ois"):
@@ -256,17 +226,9 @@ def getInstrumentTenors(filePath):
 
 	return tenors
 
-def getInstrumentPenalties(filePath):
-	csvInstrumentPenalties = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentPenalties.append(row)
-
+def getInstrumentPenalties():
 	penalties = []
-	for i in csvInstrumentPenalties:
+	for i in csvInstruments:
 		if (getInstrumentType(i)=="ccs") | (getInstrumentType(i)=="ts"):
 			penalty = 100 # borde vara 100ggr större men ty lägre likviditet så tillåter vi lite mer avvikelser
 		else:
@@ -276,46 +238,23 @@ def getInstrumentPenalties(filePath):
 	return penalties
 
 
-def getInstrumentScaleCon(filePath):
-	csvInstrumentScaleCon = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentScaleCon.append(row)
-			
+def getInstrumentScaleCon():
 	scaleCon = []
-	for i in range(0, len(csvInstrumentScaleCon)):
+	for i in range(0, len(csvInstruments)):
 		scaleCon.append(1)
 
 	return scaleCon
 
 
-def getInstrumentConTransf(filePath):
-	csvInstrumentConTransf = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentConTransf.append(row)
-			
+def getInstrumentConTransf():
 	conTransf = []
-	for i in range(0, len(csvInstrumentConTransf)):
+	for i in range(0, len(csvInstruments)):
 		conTransf.append(1)
 
 	return conTransf
 
-def getInstrumentCurrency2(filePath):
-	csvInstrumentCurrency2 = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentCurrency2.append(row)
-
+def getInstrumentCurrency2():
+	csvInstrumentCurrency2 = csvInstruments
 	currencies = []
 	for i in csvInstrumentCurrency2:
 		if(i[10]=="-"):
@@ -327,15 +266,8 @@ def getInstrumentCurrency2(filePath):
 	return currencies
 
 
-def getInstrumentTenor2(filePath):
-	csvInstrumentTenor2 = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentTenor2.append(row)
-
+def getInstrumentTenor2():
+	csvInstrumentTenor2 = csvInstruments
 	tenors = []
 	for i in csvInstrumentTenor2:
 		if(getInstrumentType(i) != "ts"):
@@ -348,15 +280,8 @@ def getInstrumentTenor2(filePath):
 
 
 
-def getCurrencySet(filePath):
-	csvInstrumentInfo = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentInfo.append(row)
-
+def getCurrencySet():
+	csvInstrumentInfo = csvInstruments
 	currencies = []
 	for i in csvInstrumentInfo:
 		currencies.append(getCountryCode(i))
@@ -367,14 +292,8 @@ def getCurrencySet(filePath):
 	return a
 
 
-def getTenorSet(filePath):
-	csvInstrumentTenors = []
-	#create a list of instrumentInfos - list item is a list of attributes of one instrument
-	with open(filePath, 'rt') as f:
-		reader = csv.reader(f, delimiter=';')
-		next(reader) # to skip the top row
-		for row in reader:
-			csvInstrumentTenors.append(row)
+def getTenorSet():
+	csvInstrumentTenors = csvInstruments
 
 	tenors = []
 	for i in csvInstrumentTenors:
@@ -406,3 +325,8 @@ def getTenorSet(filePath):
 
 	#print(tenors)
 	return a
+
+def getStartDate():
+	return getDate(csvInstruments[0])
+
+
