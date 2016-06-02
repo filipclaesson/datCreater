@@ -3,6 +3,13 @@
 import filePrinter as filePrinter
 import createInstFromCSV as csvHandler
 
+# Overview 
+# 1. read csv file
+# 2. create instruments
+# 3. print info from instruments
+
+
+# -------------- 1. read csv file and get info needed -----------
 # Read csv file
 csvFilePath = 'csvFiler/set1-20141016.csv'
 csvHandler.readCsv(csvFilePath) #csv File is read and local variable in craeteInstFromCSV is created
@@ -20,6 +27,7 @@ tenor2 = csvHandler.getInstrumentTenor2()
 currencySet = csvHandler.getCurrencySet()
 tenorSet = csvHandler.getTenorSet()
 
+# -------------- 2. Create instruments -----------
 # fill iList with a list for each instrument type
 iList = []
 iList = csvHandler.createInstrumentsFromCSV()
@@ -30,7 +38,7 @@ T = filePrinter.createT(iList, today)
 uniquePrices = []
 uniquePrices = filePrinter.createUniquePrices(iList)
 
-
+# -------------- 3. Print instruments to file -----------
 
 # Open the output file
 f = open('data.dat', 'a')
@@ -51,7 +59,7 @@ for i in tenorSet:
 	f.write(str(i) + " ")
 f.write(";\n")
 
-#print each instrument type in iList 
+#print each instrument type in iList (this prints all matrices)
 print(str(len(iList)) + " instrument types")
 for i in range(0,len(iList)):
 	filePrinter.printInstrumnetfile(iList[i], iStartNumbers[i], f, T, today)
