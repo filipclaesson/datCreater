@@ -5,8 +5,6 @@ import math
 from createInstFromCSV import *
 
 
-
-
 def createMatrix(instrumentList, columns, startDate, matrixType, T):
     #schedule has the start date as well - cash flows at one less date
     columns = columns-1
@@ -46,7 +44,6 @@ def createMatrix(instrumentList, columns, startDate, matrixType, T):
         #stack the instrument vectors on top of each other
         matrix = numpy.vstack([matrix, newrow])
     return matrix
-
 
 def printMatrixToFile(matrix, f, matricesInfo, text, startIndex):
     #shape[1] is the number of columns and shape[0] is the number of rows

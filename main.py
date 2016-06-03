@@ -8,7 +8,6 @@ import createInstFromCSV as csvHandler
 # 2. create instruments
 # 3. print info from instruments
 
-
 # -------------- 1. read csv file and get info needed -----------
 # Read csv file
 csvFilePath = 'csvFiler/set1-20141016.csv'
@@ -39,7 +38,6 @@ uniquePrices = []
 uniquePrices = filePrinter.createUniquePrices(iList)
 
 # -------------- 3. Print instruments to file -----------
-
 # Open the output file
 f = open('data.dat', 'a')
 f.seek(0)
